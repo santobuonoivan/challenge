@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run serve",
+    "serve": "node dist/app.js",
+    "dev": "tsc -w && nodemon dist/app.js",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -18,11 +22,14 @@
   },
   "homepage": "https://github.com/santobuonoivan/challenge#readme",
   "dependencies": {
+    "@typegoose/typegoose": "^11.5.0",
     "@types/node": "^20.5.7",
     "apollo-server-express": "^3.12.1",
-    "graphql": "^16.8.0",
+    "dotenv": "^16.3.1",
+    "graphql": "^15.7.1",
     "mongoose": "^7.5.0",
     "ts-node": "^10.9.1",
+    "type-graphql": "^1.1.1",
     "typescript": "^5.2.2"
   }
 }
