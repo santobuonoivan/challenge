@@ -3,8 +3,6 @@ import {
   Mutation,
   Arg,
   Query,
-  FieldResolver,
-  Root,
 } from "type-graphql";
 import { Sale, SaleModel } from "../entities/Sale";
 import { Product, ProductModel } from "../entities/Product";
@@ -44,8 +42,6 @@ export class SaleResolver {
       });
     });
 
-    
-
     // Encontrar el producto más vendido
     let mostSoldProductId: string | null = null;
     let mostSoldAmount = 0;
@@ -60,7 +56,7 @@ export class SaleResolver {
     // Si se encontró un producto más vendido, buscarlo por su ID
     if (mostSoldProductId) {
       const product = await ProductModel.findById(mostSoldProductId);
-      return { product, amount: mostSoldAmount };
+      return product;
     }
 
     // Si no se encontró ningún producto, devolver nulo
@@ -68,49 +64,49 @@ export class SaleResolver {
   }
 
   @Query(() => Product, { nullable: true })
-async mostProfitableProduct() {
-  const sales = await SaleModel.find();
+  async mostProfitableProduct() {
+    const sales = await SaleModel.find();
 
-  // Inicializar un mapa para realizar un seguimiento de las ganancias de cada producto
-  const productProfitMap = new Map<string, number>();
+    // Inicializar un mapa para realizar un seguimiento de las ganancias de cada producto
+    const productProfitMap = new Map<string, number>();
 
-  // Iterar a través de cada venta y cada producto en esas ventas
-  sales.forEach((sale) => {
-    sale.products.forEach((saleProduct: {
-        amount: number,
-        product: any
-    }) => {
-      // Obtener el ID del producto como una cadena
-      const productId = saleProduct.product.toString();
-      const productPrice = saleProduct.product.price; // Obtener el precio del producto
-      const profit = saleProduct.amount * productPrice; // Calcular ganancias
+    // Iterar a través de cada venta y cada producto en esas ventas
+    sales.forEach((sale) => {
+      sale.products.forEach((saleProduct: { amount: number; price: number; product: any }) => {
+        // Obtener el ID del producto como una cadena
+        const productId = saleProduct.product.toString();
+        const productPrice = saleProduct.price; // Obtener el precio del producto
+        const profit = saleProduct.amount * productPrice; // Calcular ganancias
 
-      // Actualizar las ganancias del producto en el mapa
-      // Si no existe, inicializa las ganancias en 0 y luego suma las ganancias
-      productProfitMap.set(productId, (productProfitMap.get(productId) || 0) + profit);
+        // Actualizar las ganancias del producto en el mapa
+        // Si no existe, inicializa las ganancias en 0 y luego suma las ganancias
+        productProfitMap.set(
+          productId,
+          (productProfitMap.get(productId) || 0) + profit
+        );
+      });
     });
-  });
 
-  // Encontrar el producto más rentable
-  let mostProfitableProductId: string | null = null;
-  let mostProfitableAmount = 0;
+    // Encontrar el producto más rentable
+    let mostProfitableProductId: string | null = null;
+    let mostProfitableAmount = 0;
 
-  for (const [productId, profit] of productProfitMap.entries()) {
-    if (profit > mostProfitableAmount) {
-      mostProfitableProductId = productId;
-      mostProfitableAmount = profit;
+    for (const [productId, profit] of productProfitMap.entries()) {
+      if (profit > mostProfitableAmount) {
+        mostProfitableProductId = productId;
+        mostProfitableAmount = profit;
+      }
     }
-  }
 
-  // Si se encontró un producto más rentable, buscarlo por su ID
-  if (mostProfitableProductId) {
-    const product = await ProductModel.findById(mostProfitableProductId);
-    return { product, amount: mostProfitableAmount };
-  }
+    // Si se encontró un producto más rentable, buscarlo por su ID
+    if (mostProfitableProductId) {
+      const product = await ProductModel.findById(mostProfitableProductId);
+      return product;
+    }
 
-  // Si no se encontró ningún producto, devolver nulo
-  return null;
-}
+    // Si no se encontró ningún producto, devolver nulo
+    return null;
+  }
 
   @Mutation(() => Sale)
   async createSale(

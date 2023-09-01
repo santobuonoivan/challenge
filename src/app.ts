@@ -2,6 +2,8 @@ import Express from 'express';
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from 'type-graphql';
 import { connect } from 'mongoose';
+import 'reflect-metadata';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { ProductResolver } from './graphql/resolves/Product';
 import { SaleResolver } from './graphql/resolves/Sale';
 import * as dotenv from 'dotenv';
@@ -25,7 +27,8 @@ const main = async () => {
   await mongoose.connection;
 
   const server = new ApolloServer({
-    schema,    
+    schema,
+    plugins: [ ApolloServerPluginLandingPageGraphQLPlayground ],
   });
 
   const app = Express();

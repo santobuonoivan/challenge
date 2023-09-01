@@ -3,8 +3,6 @@ import {
   Mutation,
   Arg,
   Query,
-  FieldResolver,
-  Root,
 } from "type-graphql";
 import { Product, ProductModel } from "../entities/Product";
 import { ProductInput } from "./types/product-input";
