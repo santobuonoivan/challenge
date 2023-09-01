@@ -2,15 +2,15 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "commonjs",
-    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
+    "strict": true,
     "outDir": "dist",
-
+    "sourceMap":true,
 
   }
 }
